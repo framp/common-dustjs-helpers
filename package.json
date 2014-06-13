@@ -16,6 +16,7 @@
     "coffee-script"   : "latest",
     "docco"           : "latest",
     "dustjs-linkedin" : "latest",
+    "dustjs-helpers"  : "latest",
     "expresso"        : "latest",
     "jscoverage"      : "latest",
     "marked"          : "latest",

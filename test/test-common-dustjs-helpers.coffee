@@ -4,11 +4,11 @@ HOMEDIR             = path.join __dirname, '..'
 DOCROOT             = path.join HOMEDIR, 'test', 'test-data'
 IS_INSTRUMENTED     = fs.existsSync(path.join(HOMEDIR,'lib-cov'))
 LIB_DIR             = if IS_INSTRUMENTED then path.join(HOMEDIR,'lib-cov') else path.join(HOMEDIR,'lib')
-CommonDustjsHelpers = require(path.join(LIB_DIR,'common-dustjs-helpers')).CommonDustjsHelpers
 #---------------------------------------------------------------------
 should     = require 'should'
 dust       = require('dustjs-linkedin')
-(new CommonDustjsHelpers()).export_helpers_to(dust)
+require('dustjs-helpers')
+require('../lib/common-dustjs-helpers')
 
 class DustTestSuite
   constructor: (suitename,testdata) ->
@@ -54,88 +54,6 @@ new DustTestSuite("@filter helper", {
     source:   'before|{@filter type="uc"}Foo Bar{/filter}|after',
     context:  {},
     expected: 'before|Foo%20Bar|after'
-  }
-}).run_tests_on dust
-
-new DustTestSuite("@if helper",{
-  '@if value=true':{
-    source:   'before|{@if value=x}YES{:else}NO{/if}|after',
-    context:  { x: true },
-    expected: 'before|YES|after'
-  }
-  '@if value=false':{
-    source:   'before|{@if value=x}YES{:else}NO{/if}|after',
-    context:  { x: false },
-    expected: 'before|NO|after'
-  }
-  '@if value="true"':{
-    source:   'before|{@if value="true"}YES{:else}NO{/if}|after',
-    context:  {  },
-    expected: 'before|YES|after'
-  }
-  '@if value="false"':{
-    source:   'before|{@if value="false"}YES{:else}NO{/if}|after',
-    expected: 'before|NO|after'
-  }
-  '@if value=X matches="Y" (true case)':{
-    source:   'before|{@if value=x matches="oo"}YES{:else}NO{/if}|after',
-    context:  { x: "foo" },
-    expected: 'before|YES|after'
-  }
-  '@if value=X matches="Y" (false case)':{
-    source:   'before|{@if value=x matches="^oo"}YES{:else}NO{/if}|after',
-    context:  { x: "foo" },
-    expected: 'before|NO|after'
-  }
-  '@if value=X is="Y" (true case)':{
-    source:   'before|{@if value=x is="foo"}YES{:else}NO{/if}|after',
-    context:  { x: "foo" },
-    expected: 'before|YES|after'
-  }
-  '@if value=X is=Y (true case)':{
-    source:   'before|{@if value=x is=y}YES{:else}NO{/if}|after',
-    context:  { x: "foo", y:"foo" },
-    expected: 'before|YES|after'
-  }
-  '@if value=X is=Y (true case)':{
-    source:   'before|{@if value=x is=x}YES{:else}NO{/if}|after',
-    context:  { x: "foo" },
-    expected: 'before|YES|after'
-  }
-  '@if count-of=X is=Y (true case)':{
-    source:   'before|{@if count-of=x is=y}YES{:else}NO{/if}|after',
-    context:  { x: [1,2,3], y:3 },
-    expected: 'before|YES|after'
-  }
-  '@if count-of=X isnt=Y (true case)':{
-    source:   'before|{@if count-of=x isnt=y}YES{:else}NO{/if}|after',
-    context:  { x: [1,2,3], y:2 },
-    expected: 'before|YES|after'
-  }
-  '@if count-of=X isnt=Y (false case)':{
-    source:   'before|{@if count-of=x isnt=y}NOT Y{:else}Y{/if}|after',
-    context:  { x: [1,2,3], y:3 },
-    expected: 'before|Y|after'
-  }
-  '@if count_of=X above=Y (true case)':{
-    source:   'before|{@if count_of=x above=y}YES{:else}NO{/if}|after',
-    context:  { x: [1,2,3], y:2 },
-    expected: 'before|YES|after'
-  }
-  '@if count_of=X above="Y" (true case)':{
-    source:   'before|{@if count_of=x above="2"}YES{:else}NO{/if}|after',
-    context:  { x: [1,2,3], y:2 },
-    expected: 'before|YES|after'
-  }
-  '@if count_of=X above=Y (false case)':{
-    source:   'before|{@if count_of=x above=y}YES{:else}NO{/if}|after',
-    context:  { x: [1,2,3], y:3 },
-    expected: 'before|NO|after'
-  }
-  '@if count_of=X above="Y" (false case)':{
-    source:   'before|{@if count_of=x above="3"}YES{:else}NO{/if}|after',
-    context:  { x: [1,2,3], y:3 },
-    expected: 'before|NO|after'
   }
 }).run_tests_on dust
 
@@ -248,11 +166,6 @@ new DustTestSuite("@repeat helper",{
 new DustTestSuite("@*case helpers",{
   '@upcase':{
     source:   'before|{@upcase}fOo foO-bar BAR{/upcase}|after',
-    context:  { },
-    expected: 'before|FOO FOO-BAR BAR|after'
-  }
-  '@UPCASE':{
-    source:   'before|{@UPCASE}fOo foO-bar BAR{/UPCASE}|after',
     context:  { },
     expected: 'before|FOO FOO-BAR BAR|after'
   }
